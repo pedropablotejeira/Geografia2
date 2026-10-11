@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presentación Interactiva - Geografía e Historia de Panamá</title>
+  <style>
+    /* =========================================================
+       1. VARIABLES CSS (TEMA VERDE PASTEL / DARK DEFAULT)
+       ========================================================= */
+    :root {
+      --bg-main: #0a120f;
+      --card-bg: #13221c;
+      --card-border: #223b31;
+      --primary-sage: #6be3b7;
+      --secondary-mint: #1c352b;
+      --accent-green: #48c99b;
+      --text-dark: #ffffff;
+      --text-muted: #b0d4c5;
+      --badge-bg: #1c382d;
+      --badge-text: #6be3b7;
+      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.6);
+      --media-bg: #0d1814;
+      --map-silhouettes: url('images/mapa-continentes.webp');
+      
+      --cover-overlay: linear-gradient(rgba(10, 18, 15, 0.88), rgba(10, 18, 15, 0.88));
+    }
+
+    body.light-theme {
+      --bg-main: #e8f0eb;
+      --card-bg: #ffffff;
+      --card-border: #c8dad0;
+      --primary-sage: #1e4035;
+      --secondary-mint: #d8ebd9;
+      --accent-green: #376e5b;
+      --text-dark: #12241e;
+      --text-muted: #4a665a;
+      --badge-bg: #dbebe2;
+      --badge-text: #1a382e;
+      --shadow-soft: 0 10px 30px rgba(30, 64, 53, 0.08);
+      --media-bg: #e1ebe5;
+
+      /* Fondo atenuado para el recuadro de la portada */
+      --cover-overlay: linear-gradient(rgba(240, 245, 242, 0.85), rgba(240, 245, 242, 0.35));
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      color: var(--text-dark);
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.presentation-active {
+      background-image: var(--map-silhouettes);
+    }
+
+    /* ENCABEZADO SUPERIOR */
+    .app-header {
+      width: 100%;
+      height: 60px;
+      padding: 0 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--card-border);
+      z-index: 10;
+    }
+
+    .header-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary-sage);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .theme-toggle-btn, .nav-action-btn {
+      background: var(--secondary-mint);
+      color: var(--primary-sage);
+      border: 1px solid var(--card-border);
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle-btn:hover, .nav-action-btn:hover {
+      background: var(--primary-sage);
+      color: #0a120f;
+      transform: translateY(-1px);
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    .main-viewport {
+      flex: 1;
+      width: 100%;
+      height: calc(100vh - 60px);
+      padding: 20px 30px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* PORTADA */
+    .cover-container {
+      width: 100%;
+      height: 100%;
+      background-image: var(--cover-overlay), var(--map-silhouettes);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      border-radius: 20px;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .cover-title {
+      font-size: 2.8rem;
+      color: var(--primary-sage);
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .cover-subtitle {
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+    }
+
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px 25px;
+      width: 100%;
+      max-width: 850px;
+      margin-bottom: 40px;
+    }
+
+    .member-card {
+      background: var(--card-bg);
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .member-id {
+      color: var(--accent-green);
+      font-weight: 700;
+    }
+
+    .btn-start {
+      background: var(--primary-sage);
+      color: #12241e;
+      font-size: 1.2rem;
+      font-weight: 800;
+      padding: 16px 45px;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .btn-start:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    /* VISTA DE DIAPOSITIVAS */
+    .slide-viewport {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .slide-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slide-counter {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-sage);
+      background: var(--badge-bg);
+      padding: 6px 16px;
+      border-radius: 20px;
+    }
+
+    .slide-select {
+      background: var(--card-bg);
+      color: var(--text-dark);
+      border: 1px solid var(--card-border);
+      padding: 8px 15px;
+      border-radius: 12px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .columns-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      width: 100%;
+      min-height: 0;
+    }
+
+    .concept-column {
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow-soft);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden; /* Evita que elementos internos rompan la caja */
+    }
+
+    .concept-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .concept-tag {
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-weight: 800;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .concept-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary-sage);
+    }
+
+    /* CONTENEDOR DE IMAGEN OPTIMIZADO */
+    .media-box {
+      width: 100%;
+      aspect-ratio: 16 / 10; /* Fija una proporción geométrica exacta en todas las pantallas */
+      background: var(--media-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .media-box img, .media-box video, .media-box iframe {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* Muestra toda la infografía completa sin recortes */
+      object-position: center;
+      border: none;
+    }
+
+    .media-placeholder {
+      color: var(--text-muted);
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    /* CAJA DE TEXTO EXPLICATIVO / DEFINICIÓN */
+    .concept-description {
+      background: var(--secondary-mint);
+      border-left: 4px solid var(--accent-green);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: var(--text-dark);
+      font-weight: 500;
+      max-height: 95px; /* Altura máxima controlada */
+      min-height: 60px;
+      overflow-y: auto; /* Si el texto es largo, genera scroll interno en lugar de estirar la pantalla */
+    }
+
+    .controls-footer {
+      height: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-btn {
+      background: var(--primary-sage);
+      color: #12241e;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--card-border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-green);
+      transition: width 0.3s ease;
+    }
+
+    .hidden { display: none !important; }
+	
+	.logo-container {
+		display: flex;
+		justify-content: center;}
+		
+	.cover-logo {
+    filter:
+        drop-shadow(1px 0 0 #000)
+        drop-shadow(-1px 0 0 #000)
+        drop-shadow(0 1px 0 #000)
+        drop-shadow(0 -1px 0 #000);
+}
+  </style>
+</head>
+<body class="dark-theme">
+
+  <!-- ENCABEZADO GLOBAL -->
+  <header class="app-header">
+    <div class="header-title">
+      🗺️ GLOSARIO DE GEOGRAFIA
+    </div>
+    <div class="header-actions">
+      <button class="nav-action-btn hidden" id="btnBackCover" onclick="showCover()">🏠 Portada</button>
+      <button class="theme-toggle-btn" id="btnTheme" onclick="toggleTheme()">
+        <span id="themeIcon">☀️</span> Modo Oscuro
+      </button>
+    </div>
+  </header>
+
+  <!-- VISTA PRINCIPAL -->
+  <main class="main-viewport">
+
+    <!-- 1. VISTA DE PORTADA -->
+    <div id="coverView" class="cover-container">
+      <div class="logo-container">
+            <img src="images/university-logo.png" alt="Logo Institucional" class="cover-logo" onerror="this.src='https://placehold.co/440x110/221a14/ffda66?text=Geograf%C3%ADa+e+Historia+de+Panam%C3%A1'">
+          </div>
+	  <h1 class="cover-title">Geografía e Historia de Panamá</h1>
+      <p class="cover-subtitle">Glosario 1</p>
+
+      <div class="members-grid">
+        <div class="member-card"><span>Cardozo, Miriam</span><span class="member-id">E-8-16-2024</span></div>
+        <div class="member-card"><span>González, Isabel</span><span class="member-id">8-822-1535</span></div>
+        <div class="member-card"><span>González, Jeisson</span><span class="member-id">8-898-2018</span></div>
+        <div class="member-card"><span>Tejeira, Pedro</span><span class="member-id">8-741-1265</span></div>
+        <div class="member-card"><span>Vives, Levis</span><span class="member-id">E-8-22-4213</span></div>
+      </div>
+
+      <p style="margin-bottom: 25px; color: var(--text-muted); font-weight: 600;">Profesor: Alexis Batista</p>
+      <button class="btn-start" onclick="startPresentation()">Iniciar Presentación ▶</button>
+    </div>
+
+    <!-- 2. VISTA DE DIAPOSITIVAS -->
+    <div id="presentationView" class="slide-viewport hidden">
+
+      <div class="slide-top-bar">
+        <span class="slide-counter" id="slideCounter">Diapositiva 1 de 25</span>
+        <select class="slide-select" id="slideDropdown" onchange="goToSlide(this.value)"></select>
+      </div>
+
+      <div class="columns-container">
+
+        <!-- COLUMNA IZQUIERDA -->
+        <div class="concept-column">
+          <div class="concept-header">
+            <span class="concept-tag" id="tagConcept1">Glosario</span>
+            <h2 class="concept-title" id="titleConcept1">Geografía</h2>
+          </div>
+          <div class="media-box" id="mediaBox1">
+            <div class="media-placeholder">📷 Espacio Reservado para Imagen 1</div>
+          </div>
+          <div class="concept-description" id="descConcept1">
+            Cargando definición...
+          </div>
+        </div>
+
+        <!-- COLUMNA DERECHA -->
+        <div class="concept-column">
+          <div class="concept-header">
+            <span class="concept-tag" id="tagConcept2">Glosario</span>
+            <h2 class="concept-title" id="titleConcept2">Superficie Terrestre</h2>
+          </div>
+          <div class="media-box" id="mediaBox2">
+            <div class="media-placeholder">📷 Espacio Reservado para Imagen 2</div>
+          </div>
+          <div class="concept-description" id="descConcept2">
+            Cargando definición...
+          </div>
+        </div>
+
+      </div>
+
+      <footer class="controls-footer">
+        <button class="nav-btn" id="btnPrev" onclick="changeSlide(-1)">◀ Anterior</button>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <button class="nav-btn" id="btnNext" onclick="changeSlide(1)">Siguiente ▶</button>
+      </footer>
+
+    </div>
+
+  </main>
+
+  <script>
+    const slidesData = [
+      { 
+        page: 1, 
+        c1: "GEOGRAFÍA", 
+        c2: "SUPERFICIE TERRESTRE", 
+        media1: "images/image01.webp", 
+        media2: "images/image02.webp",
+        desc1: "Es la ciencia que estudia y describe la superficie de la Tierra: sus paisajes, climas, relieve, aguas, seres vivos y también la forma en que las personas se distribuyen y transforman el espacio. Su nombre viene del griego geo (Tierra) y graphein (describir o escribir), es decir, descripción de la Tierra. Su objetivo es entender dónde ocurren los fenómenos, por qué ocurren allí y cómo se relacionan entre sí.",
+        desc2: "Es la capa exterior de la Tierra, donde se encuentran la tierra firme y las aguas, y donde se desarrolla la vida. Es el espacio de contacto entre la litosfera (la parte sólida), la hidrosfera (las aguas), la atmósfera (el aire) y la biosfera (los seres vivos). Tiene una extensión total de unos 510 millones de km². Tierras emergidas (continentes e islas): ocupan aproximadamente el 29 % de la superficie, es decir, unos 149 millones de km². Aguas (océanos, mares, lagos y ríos): cubren cerca del 71 %, unos 361 millones de km²."
+      },
+      { 
+        page: 2, 
+        c1: "TEORÍA DE LA DERIVA CONTINENTAL", 
+        c2: "PLACAS TECTÓNICAS", 
+        media1: "images/image03.webp", 
+        media2: "images/image04.webp",
+        desc1: "Hipótesis propuesta en 1912 por Alfred Wegener, plantea que hace unos 250 a 300 millones de años los continentes estaban unidos en un solo supercontinente llamado Pangea y que, con el tiempo, se separaron y se desplazaron hasta su posición actual. Se apoya en el encaje de las costas, fósiles idénticos en continentes distantes, cadenas montañosas que se continúan y huellas de climas antiguos. Fue confirmada décadas después por la tectónica de placas.",
+        desc2: "Son grandes fragmentos rígidos en que se divide la litosfera (la capa externa de la Tierra, formada por la corteza y la parte superior del manto). Flotan y se desplazan lentamente, unos pocos centímetros al año, sobre la astenosfera, una capa del manto más caliente y plástica, impulsadas por las corrientes de convección del interior terrestre. Las principales son la Pacífica, Norteamericana, Sudamericana, Euroasiática, Africana, Indoaustraliana y Antártica. En sus bordes, al separarse, chocar o deslizarse entre sí, se originan terremotos, volcanes, montañas y fosas oceánicas."
+      },
+      { page: 3, 
+	  c1: "VULCANISMO", 
+	  c2: "GEODESIA", 
+	  media1: "images/image05.webp", 
+	  media2: "images/image06.webp", 
+	  desc1: "Es el conjunto de procesos por los cuales el magma (roca fundida del interior de la Tierra), junto con gases y fragmentos de roca, asciende a la superficie a través de grietas o conductos llamados volcanes. Al salir, el magma recibe el nombre de lava y, al enfriarse, forma rocas volcánicas y modifica el relieve. Se concentra sobre todo en los bordes de las placas tectónicas, como en el Cinturón de Fuego del Pacífico, aunque también existen volcanes en zonas intraplaca llamadas puntos calientes, como Hawái. Sus manifestaciones incluyen erupciones, fumarolas, géiseres y aguas termales. Aunque puede causar destrucción, también aporta suelos fértiles y energía geotérmica.", 
+	  desc2: "Es la ciencia que estudia la forma, las dimensiones y el campo gravitatorio de la Tierra, y que determina con precisión la posición de puntos sobre su superficie. Para ello mide distancias, ángulos y alturas mediante instrumentos topográficos, satélites y sistemas de posicionamiento como el GPS. Como la Tierra no es una esfera perfecta, sino ligeramente achatada en los polos, utiliza modelos como el elipsoide y el geoide (superficie que representa el nivel medio del mar prolongado bajo los continentes). Sus datos son la base de la cartografía, la topografía, la navegación y el estudio de fenómenos como el movimiento de las placas tectónicas." 
+	  },
+      { page: 4, 
+	  c1: "GEOLOGÍA", 
+	  c2: "GEOMORFOLOGÍA", 
+	  media1: "images/image07.webp", 
+	  media2: "images/image08.webp", 
+	  desc1: "Es la ciencia que estudia la composición, estructura e historia de la Tierra, así como los procesos que la han formado y la siguen transformando. Analiza los materiales que la componen, como minerales y rocas, y las fuerzas internas (volcanes, terremotos, movimiento de placas) y externas (erosión, transporte y sedimentación) que modelan el relieve. Mediante el estudio de los fósiles y de las capas de roca, reconstruye la edad del planeta, unos 4.500 millones de años, y la evolución de la vida. Sus conocimientos permiten localizar recursos como minerales, petróleo y agua subterránea, y prevenir riesgos naturales como sismos, deslizamientos y erupciones", 
+	  desc2: "Es la ciencia que estudia las formas del relieve terrestre, su origen, su evolución y los procesos que las modelan. Analiza cómo las fuerzas internas, como el vulcanismo, los terremotos y el movimiento de las placas tectónicas, levantan y deforman la superficie, y cómo las fuerzas externas, como la erosión, el transporte y la sedimentación causados por el agua, el viento, el hielo y la gravedad, la desgastan y la remodelan. Estudia formas como montañas, valles, llanuras, cañones, dunas, glaciares y costas. Sus conocimientos son útiles para la planificación del territorio, la prevención de riesgos como deslizamientos e inundaciones y el estudio del cambio del paisaje a lo largo del tiempo." 
+	  },
+      { page: 5, 
+	  c1: "CARTOGRAFÍA", 
+	  c2: "ASTROLOGÍA", 
+	  media1: "images/image09.webp", 
+	  media2: "images/image10.webp", 
+	  desc1: "Es la ciencia, técnica y arte de elaborar, interpretar y conservar mapas, cartas y planos, que son representaciones reducidas y simplificadas de la superficie terrestre sobre una superficie plana. Para lograrlo utiliza la escala, que relaciona la distancia en el mapa con la real, las proyecciones cartográficas (cilíndricas, cónicas y planas), que convierten la forma esférica de la Tierra en un plano, y la simbología, que incluye signos, colores y una leyenda para interpretar la información. Se apoya en datos de la geodesia, la topografía, la fotografía aérea y las imágenes satelitales. Según su contenido, los mapas pueden ser físicos, políticos, temáticos o topográficos. Hoy se aplica también de forma digital en los sistemas de información geográfica (SIG) y en aplicaciones de navegación como el GPS.", 
+	  desc2: "Es un sistema de creencias que sostiene que la posición y el movimiento de los astros (el Sol, la Luna y los planetas) en el momento del nacimiento influyen en la personalidad, el carácter y el destino de las personas. Se basa en el zodiaco, una franja del cielo dividida en doce signos (Aries, Tauro, Géminis, Cáncer, Leo, Virgo, Libra, Escorpio, Sagitario, Capricornio, Acuario y Piscis), y en la elaboración de cartas astrales y horóscopos. Nació en la antigua Mesopotamia y se desarrolló en Egipto, Grecia y Roma. No es una ciencia: no tiene base científica comprobada y no debe confundirse con la astronomía, que sí estudia de forma científica los astros y el universo." 
+	  },
+      { page: 6, c1: "Nutación", c2: "Terrestre", media1: "", media2: "", desc1: "Oscilación periódica del eje de rotación de la Tierra.", desc2: "Causado por la atracción gravitacional de la Luna y el Sol." },
+      { page: 7, c1: "Bamboleo", c2: "Chandler", media1: "", media2: "", desc1: "Pequeña variación en el eje de rotación de la Tierra.", desc2: "Descubierto en 1891 por el astrónomo Seth Carlo Chandler." },
+      { page: 8, c1: "Pangea", c2: "Origen", media1: "", media2: "", desc1: "Supercontinente existente al final de la era Paleozoica.", desc2: "Proceso de fragmentación en Laurasia y Gondwana." },
+      { page: 9, c1: "Región", c2: "Arqueológica", media1: "", media2: "", desc1: "Área geográfica definida por vestigios precolombinos.", desc2: "Zonas de asentamiento prehistórico en el istmo." },
+      { page: 10, c1: "Gran", c2: "Coclé", media1: "", media2: "", desc1: "Región cultural precolombina del centro de Panamá.", desc2: "Reconocida por su cerámica policromada y orfebrería de oro." },
+      { page: 11, c1: "Gran", c2: "Chiriquí", media1: "", media2: "", desc1: "Área cultural que abarca el occidente panameño y Costa Rica.", desc2: "Destaca por sus esculturas en piedra y metates ceremoniales." },
+      { page: 12, c1: "Gran", c2: "Darién", media1: "", media2: "", desc1: "Zona cultural comprendida en el oriente panameño.", desc2: "Influencia cultural entre Mesoamérica y América del Sur." },
+      { page: 13, c1: "Cacicazgos", c2: "Indígenas", media1: "", media2: "", desc1: "Organización social y política previa a la llegada española.", desc2: "Liderados por caciques como Paris, Urraca y Careta." },
+      { page: 14, c1: "Orfebrería", c2: "Prehispánica", media1: "", media2: "", desc1: "Arte de trabajar metales preciosos como oro y tumbaga.", desc2: "Representaciones zoomorfas y antropomorfas de gran detalle." },
+      { page: 15, c1: "Avistamiento", c2: "Pacífico", media1: "", media2: "", desc1: "Descubrimiento del Mar del Sur por Vasco Núñez de Balboa en 1513.", desc2: "Apertura de la ruta interoceánica a través del Istmo." },
+      { page: 16, c1: "Fundación", c2: "Panamá", media1: "", media2: "", desc1: "Fundación de Nuestra Señora de la Asunción de Panamá en 1519.", desc2: "Primera ciudad española en las costas del Océano Pacífico." },
+      { page: 17, c1: "Camino", c2: "Real", media1: "", media2: "", desc1: "Ruta colonial entre las ciudades de Panamá y Nombre de Dios / Portobelo.", desc2: "Eje de transporte del oro y plata provenientes del Perú." },
+      { page: 18, c1: "Ferias", c2: "Portobelo", media1: "", media2: "", desc1: "Encuentro comercial entre España y las colonias sudamericanas.", desc2: "Intercambio de manufacturas europeas por metales preciosos." },
+      { page: 19, c1: "Independencia", c2: "1821", media1: "", media2: "", desc1: "Proceso de independencia de Panamá de la Corona Española.", desc2: "Unión voluntaria a la Gran Colombia impulsada por Simón Bolívar." },
+      { page: 20, c1: "Unión", c2: "Colombia", media1: "", media2: "", desc1: "Período departamental de Panamá unido a la República de Colombia.", desc2: "Intentos separatistas y conflictos políticos durante el siglo XIX." },
+      { page: 21, c1: "Ferrocarril", c2: "Interoceánico", media1: "", media2: "", desc1: "Construcción del primer ferrocarril transcontinental en 1855.", desc2: "Impulsado por la Fiebre del Oro de California." },
+      { page: 22, c1: "Separación", c2: "1903", media1: "", media2: "", desc1: "Proclamación de la separación de Panamá de Colombia el 3 de noviembre.", desc2: "Surgimiento de la República de Panamá como estado soberano." },
+      { page: 23, c1: "Gesta", c2: "Soberanía", media1: "", media2: "", desc1: "Luchas generacionales por la recuperación de la Zona del Canal.", desc2: "Acontecimientos patrióticos del 9 de enero de 1964." },
+      { page: 24, c1: "Tratados", c2: "Torrijos", media1: "", media2: "", desc1: "Firma de los Tratados Torrijos-Carter en 1977.", desc2: "Paso de la administración del Canal a manos panameñas el 31 de diciembre de 1999." },
+      { page: 25, c1: "Canal", c2: "Ampliación", media1: "", media2: "", desc1: "Obra de ingeniería que permite el paso de buques Neopanamax.", desc2: "Inauguración del tercer juego de esclusas en 2016." }
+    ];
+
+    let currentSlide = 0;
+
+    function initDropdown() {
+      const dropdown = document.getElementById('slideDropdown');
+      dropdown.innerHTML = '';
+      slidesData.forEach((slide, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `Página ${slide.page}: ${slide.c1} / ${slide.c2}`;
+        dropdown.appendChild(option);
+      });
+    }
+
+    function renderMedia(boxId, mediaSrc, placeholderText) {
+      const box = document.getElementById(boxId);
+      if (mediaSrc) {
+        box.innerHTML = `<img src="${mediaSrc}" alt="Media" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\\'media-placeholder\\'>📷 ${placeholderText}</div>';">`;
+      } else {
+        box.innerHTML = `<div class="media-placeholder">📷 ${placeholderText}</div>`;
+      }
+    }
+
+    function renderSlide() {
+      const slide = slidesData[currentSlide];
+      document.getElementById('slideCounter').textContent = `Diapositiva ${slide.page} de ${slidesData.length}`;
+      document.getElementById('titleConcept1').textContent = slide.c1;
+      document.getElementById('titleConcept2').textContent = slide.c2;
+      document.getElementById('descConcept1').textContent = slide.desc1 || "Sin definición asignada.";
+      document.getElementById('descConcept2').textContent = slide.desc2 || "Sin definición asignada.";
+      document.getElementById('slideDropdown').value = currentSlide;
+
+      renderMedia('mediaBox1', slide.media1, 'Espacio Reservado para Imagen / Video 1');
+      renderMedia('mediaBox2', slide.media2, 'Espacio Reservado para Imagen / Video 2');
+
+      document.getElementById('btnPrev').disabled = (currentSlide === 0);
+      document.getElementById('btnNext').disabled = (currentSlide === slidesData.length - 1);
+
+      const percent = ((currentSlide + 1) / slidesData.length) * 100;
+      document.getElementById('progressFill').style.width = `${percent}%`;
+
+      // Guardar diapositiva actual en localStorage
+      localStorage.setItem('currentSlide', currentSlide);
+    }
+
+    function changeSlide(direction) {
+      const nextIndex = currentSlide + direction;
+      if (nextIndex >= 0 && nextIndex < slidesData.length) {
+        currentSlide = nextIndex;
+        renderSlide();
+      }
+    }
+
+    function goToSlide(index) {
+      currentSlide = parseInt(index, 10);
+      renderSlide();
+    }
+
+    function startPresentation() {
+      document.body.classList.add('presentation-active');
+      document.getElementById('coverView').classList.add('hidden');
+      document.getElementById('presentationView').classList.remove('hidden');
+      document.getElementById('btnBackCover').classList.remove('hidden');
+      localStorage.setItem('activeView', 'presentation');
+      renderSlide();
+    }
+
+    function showCover() {
+      document.body.classList.remove('presentation-active');
+      document.getElementById('presentationView').classList.add('hidden');
+      document.getElementById('btnBackCover').classList.add('hidden');
+      document.getElementById('coverView').classList.remove('hidden');
+      localStorage.setItem('activeView', 'cover');
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const themeIcon = document.getElementById('themeIcon');
+      
+      const isLight = body.classList.toggle('light-theme');
+      body.classList.toggle('dark-theme', !isLight);
+      
+      themeIcon.textContent = isLight ? "🌙" : "☀️";
+      localStorage.setItem('appTheme', isLight ? 'light' : 'dark');
+    }
+
+    function applySavedTheme() {
+      const savedTheme = localStorage.getItem('appTheme') || 'dark';
+      const body = document.body;
+      const themeIcon = document.getElementById('themeIcon');
+
+      if (savedTheme === 'light') {
+        body.classList.remove('dark-theme');
+        body.classList.add('light-theme');
+        themeIcon.textContent = "🌙";
+      } else {
+        body.classList.remove('light-theme');
+        body.classList.add('dark-theme');
+        themeIcon.textContent = "☀️";
+      }
+    }
+
+    function restoreViewState() {
+      const savedView = localStorage.getItem('activeView');
+      const savedSlide = localStorage.getItem('currentSlide');
+
+      if (savedSlide !== null) {
+        currentSlide = parseInt(savedSlide, 10);
+      }
+
+      if (savedView === 'presentation') {
+        startPresentation();
+      } else {
+        showCover();
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const isVisible = !document.getElementById('presentationView').classList.contains('hidden');
+      if (isVisible) {
+        if (e.key === 'ArrowRight' || e.key === 'Space') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initDropdown();
+      applySavedTheme();
+      restoreViewState();
+    });
+  </script>
+</body>
+</html>
